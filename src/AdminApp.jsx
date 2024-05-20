@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:4000");
+const socket = io("https://quiz-server-8i0m2n8j5-joespks-projects.vercel.app");
 
 const AdminApp = () => {
   const [question, setQuestion] = useState("");

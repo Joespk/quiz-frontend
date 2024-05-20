@@ -7,7 +7,9 @@ const Summaryplayer = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/summary");
+        const response = await axios.get(
+          "https://quiz-server-5j1xm7t5h-joespks-projects.vercel.app/summary"
+        );
         console.log("Fetched summary:", response.data);
         setSummary(response.data);
       } catch (error) {
