@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 
-const socket = io("https://quiz-server-8i0m2n8j5-joespks-projects.vercel.app");
+const socket = io("https://quiz-server-8i0m2n8j5-joespks-projects.vercel.app", {
+  withCredentials: true,
+  extraHeaders: {
+    Authorization: "Bearer YOUR_SECRET_TOKEN", // If your server requires authorization
+  },
+});
 
 const AdminApp = () => {
   const [question, setQuestion] = useState("");
