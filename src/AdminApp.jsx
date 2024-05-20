@@ -1,43 +1,80 @@
-import React, { useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import React, { useEffect, useState } from "react";
+import io from "socket.io-client";
 
-const socket = io('http://localhost:4000');
+const socket = io("http://localhost:4000");
 
 const AdminApp = () => {
-  const [question, setQuestion] = useState('');
+  const [question, setQuestion] = useState("");
   const [players, setPlayers] = useState([]);
+  const [quizStarted, setQuizStarted] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Track current question index
+  const [totalQuestions, setTotalQuestions] = useState(0); // Track total number of questions
 
   useEffect(() => {
-    socket.on('question', (newQuestion) => {
-      setQuestion(newQuestion.question); // Ensure accessing the question property
+    socket.on("question", (newQuestion) => {
+      setQuestion(newQuestion.question);
+      setCurrentQuestionIndex(newQuestion.index); // Set current question index
     });
 
-    socket.on('playerList', (players) => {
-      setPlayers(players); // Update player list in real-time
+    socket.on("playerList", (players) => {
+      setPlayers(players);
+    });
+
+    socket.on("quizStarted", (totalQuestions) => {
+      setQuizStarted(true);
+      setTotalQuestions(totalQuestions); // Set total number of questions when quiz starts
+    });
+
+    socket.on("quizEnded", () => {
+      setQuizStarted(false);
     });
 
     return () => {
-      socket.off('question');
-      socket.off('playerList');
+      socket.off("question");
+      socket.off("playerList");
+      socket.off("quizStarted");
+      socket.off("quizEnded");
     };
   }, []);
 
+  const startQuiz = () => {
+    socket.emit("startQuiz");
+  };
+
+  const endQuiz = () => {
+    socket.emit("endQuiz");
+  };
+
   const nextQuestion = () => {
-    socket.emit('nextQuestion');
+    socket.emit("nextQuestion");
   };
 
   const prevQuestion = () => {
-    socket.emit('prevQuestion');
+    socket.emit("prevQuestion");
   };
 
   return (
     <div>
       <h1>Admin Panel</h1>
-      <div>
-        <h2>Current Question: {question}</h2>
-      </div>
-      <button onClick={prevQuestion}>Previous Question</button>
-      <button onClick={nextQuestion}>Next Question</button>
+      {!quizStarted ? (
+        <button onClick={startQuiz}>Start Quiz</button>
+      ) : (
+        <div>
+          <h2>Current Question: {question}</h2>
+          <button onClick={prevQuestion} disabled={currentQuestionIndex === 0}>
+            Previous Question
+          </button>
+          <button
+            onClick={nextQuestion}
+            disabled={currentQuestionIndex === totalQuestions - 1}
+          >
+            Next Question
+          </button>
+          {currentQuestionIndex === totalQuestions - 1 && (
+            <button onClick={endQuiz}>End Quiz</button>
+          )}
+        </div>
+      )}
       <h2>Connected Players</h2>
       <ul>
         {players.map((player, index) => (
