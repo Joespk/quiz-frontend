@@ -191,7 +191,26 @@ const PlayerApp = () => {
                 Submit Answer
               </button>
               {result && <p>{result}</p>}
-              <p>Time remaining: {timeRemaining} seconds</p>
+              <div style={{ marginTop: "10px" }}>
+                <p>Time remaining: {timeRemaining} seconds</p>
+                <div
+                  style={{
+                    backgroundColor: "#ccc",
+                    width: "100%",
+                    height: "20px",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: "green",
+                      width: `${(timeRemaining / 30) * 100}%`,
+                      height: "100%",
+                      borderRadius: "10px",
+                    }}
+                  ></div>
+                </div>
+              </div>
             </>
           ) : (
             <p>Waiting for the quiz to start...</p>
