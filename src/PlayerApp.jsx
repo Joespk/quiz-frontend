@@ -29,7 +29,6 @@ const PlayerApp = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
-  const [summary, setSummary] = useState([]); // สร้าง state สำหรับ summary
   const timerRef = useRef(null);
   const startTimeRef = useRef(null); // To store the start time of the question
 
@@ -66,8 +65,13 @@ const PlayerApp = () => {
       }, 1000);
     });
 
-    socket.on("answerResult", (data) => {
+    socket.on("answerResult", async (data) => {
       setResult(data.isCorrect ? "Correct!" : data.message || "Incorrect!");
+
+      // Fetch and display summary after receiving the result
+      if (data.isCorrect) {
+        await fetchSummary();
+      }
     });
 
     socket.on("quizStarted", () => {
@@ -100,8 +104,16 @@ const PlayerApp = () => {
       const response = await axios.get(
         "https://metal-earthy-space.glitch.me/summary"
       );
-      setSummary(response.data);
-      alert(JSON.stringify(response.data, null, 2)); // แจ้งเตือนข้อมูล summary
+      const summary = response.data;
+
+      // Find the fastest correct answer for the current question
+      const currentSummary = summary.find((item) => item.question === question);
+      if (currentSummary && currentSummary.fastestAnswer) {
+        const { name, timeAnswered } = currentSummary.fastestAnswer;
+        alert(
+          `Fastest correct answer: ${name} - Time answered: ${timeAnswered} seconds`
+        );
+      }
     } catch (error) {
       console.error("Error fetching summary:", error);
     }
@@ -176,8 +188,6 @@ const PlayerApp = () => {
           ) : (
             <p>Waiting for the quiz to start...</p>
           )}
-          <button onClick={fetchSummary}>Show Summary</button>{" "}
-          {/* ปุ่มเพื่อเรียก fetchSummary */}
         </div>
       )}
     </div>
