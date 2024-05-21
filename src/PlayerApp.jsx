@@ -30,6 +30,7 @@ const PlayerApp = () => {
   const [quizStarted, setQuizStarted] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [notification, setNotification] = useState(null); // State for notification
+  const [score, setScore] = useState(0); // State for player's score
   const timerRef = useRef(null);
   const startTimeRef = useRef(null); // To store the start time of the question
 
@@ -70,8 +71,9 @@ const PlayerApp = () => {
     socket.on("answerResult", async (data) => {
       setResult(data.isCorrect ? "Correct!" : data.message || "Incorrect!");
 
-      // Fetch and display summary after receiving the result
+      // Update score if the answer is correct
       if (data.isCorrect) {
+        setScore((prevScore) => prevScore + 1);
         await fetchSummary();
       }
     });
@@ -84,7 +86,7 @@ const PlayerApp = () => {
       setQuizStarted(false);
       setQuestion("");
       setChoices([]);
-      setResult("The quiz has ended.");
+      setResult(`The quiz has ended. Your final score is ${score} points.`);
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
@@ -99,7 +101,7 @@ const PlayerApp = () => {
         clearInterval(timerRef.current);
       }
     };
-  }, []);
+  }, [score]);
 
   const fetchSummary = async () => {
     try {
@@ -213,7 +215,10 @@ const PlayerApp = () => {
               </div>
             </>
           ) : (
-            <p>Waiting for the quiz to start...</p>
+            <>
+              <p>Waiting for the quiz to start...</p>
+              {result && <p>{result}</p>}
+            </>
           )}
         </div>
       )}
