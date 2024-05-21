@@ -8,13 +8,7 @@ const Summaryplayer = () => {
     const fetchSummary = async () => {
       try {
         const response = await axios.get(
-          "https://quiz-server-5j1xm7t5h-joespks-projects.vercel.app/summary",
-          {
-            headers: {
-              Authorization: "Bearer YOUR_SECRET_TOKEN", // Replace with your actual token
-              "Content-Type": "application/json",
-            },
-          }
+          "https://quiz-server-ecru.vercel.app/summary"
         );
         console.log("Fetched summary:", response.data);
         setSummary(response.data);
