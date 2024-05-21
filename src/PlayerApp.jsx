@@ -31,6 +31,7 @@ const PlayerApp = () => {
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [notification, setNotification] = useState(null); // State for notification
   const [score, setScore] = useState(0); // State for player's score
+  const [finalScore, setFinalScore] = useState(null); // State for final score display
   const timerRef = useRef(null);
   const startTimeRef = useRef(null); // To store the start time of the question
 
@@ -82,14 +83,15 @@ const PlayerApp = () => {
       setQuizStarted(true);
     });
 
-    socket.on("quizEnded", () => {
+    socket.on("quizEnded", async () => {
       setQuizStarted(false);
       setQuestion("");
       setChoices([]);
-      setResult(`The quiz has ended. Your final score is ${score} points.`);
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
+      // Fetch final score from summary
+      await fetchFinalScore();
     });
 
     return () => {
@@ -123,6 +125,26 @@ const PlayerApp = () => {
       }
     } catch (error) {
       console.error("Error fetching summary:", error);
+    }
+  };
+
+  const fetchFinalScore = async () => {
+    try {
+      const response = await axios.get(
+        "https://metal-earthy-space.glitch.me/summary"
+      );
+      const summary = response.data;
+      const userScore = summary.find(
+        (item) => item.user === name // Assuming the summary has a 'user' field
+      );
+      if (userScore) {
+        setFinalScore(`Your final score is ${userScore.score} points.`);
+      } else {
+        setFinalScore("Unable to retrieve your final score.");
+      }
+    } catch (error) {
+      console.error("Error fetching final score:", error);
+      setFinalScore("Error fetching final score.");
     }
   };
 
@@ -218,6 +240,7 @@ const PlayerApp = () => {
             <>
               <p>Waiting for the quiz to start...</p>
               {result && <p>{result}</p>}
+              {finalScore && <p>{finalScore}</p>}
             </>
           )}
         </div>
