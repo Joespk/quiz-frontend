@@ -8,7 +8,7 @@ const Summaryplayer = () => {
     const fetchSummary = async () => {
       try {
         const response = await axios.get(
-          "https://quiz-server-ecru.vercel.app/summary"
+          "https://metal-earthy-space.glitch.me/summary"
         );
         console.log("Fetched summary:", response.data);
         setSummary(response.data);

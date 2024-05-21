@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 
-const socket = io("https://quiz-server-ecru.vercel.app", {
+const socket = io("https://metal-earthy-space.glitch.me", {
   path: "/socket.io",
   transports: ["websocket", "polling"], // เพิ่ม WebSocket transport อย่างชัดเจน
 });
