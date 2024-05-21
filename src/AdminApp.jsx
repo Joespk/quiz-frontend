@@ -1,7 +1,22 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 
-const socket = io("https://quiz-server-ecru.vercel.app");
+const socket = io("https://quiz-server-ecru.vercel.app", {
+  path: "/socket.io",
+  transports: ["websocket", "polling"], // เพิ่ม WebSocket transport อย่างชัดเจน
+});
+
+socket.on("connect", () => {
+  console.log("Connected to the server");
+});
+
+socket.on("connect_error", (error) => {
+  console.error("Connection Error:", error);
+});
+
+socket.on("disconnect", (reason) => {
+  console.log(`Disconnected from server: ${reason}`);
+});
 
 const AdminApp = () => {
   const [question, setQuestion] = useState("");
