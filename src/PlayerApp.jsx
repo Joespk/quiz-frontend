@@ -28,7 +28,7 @@ const PlayerApp = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
-
+  const [summary, setSummary] = useState([]);
   const timerRef = useRef(null);
   const startTimeRef = useRef(null); // To store the start time of the question
 
@@ -93,6 +93,18 @@ const PlayerApp = () => {
       }
     };
   }, []);
+
+  const fetchSummary = async () => {
+    try {
+      const response = await axios.get(
+        "https://metal-earthy-space.glitch.me/summary"
+      );
+      setSummary(response.data);
+      alert(JSON.stringify(response.data, null, 2)); // แจ้งเตือนข้อมูล summary
+    } catch (error) {
+      console.error("Error fetching summary:", error);
+    }
+  };
 
   const submitAnswer = () => {
     if (!selectedAnswer) {
