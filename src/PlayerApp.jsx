@@ -29,6 +29,7 @@ const PlayerApp = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
+  const [notification, setNotification] = useState(null); // State for notification
   const timerRef = useRef(null);
   const startTimeRef = useRef(null); // To store the start time of the question
 
@@ -44,6 +45,7 @@ const PlayerApp = () => {
       setResult(null); // Reset result for new question
       setIsSubmitted(false); // Allow submission for new question
       setTimeRemaining(30); // Reset timer for new question
+      setNotification(null); // Clear any previous notifications
 
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -110,9 +112,12 @@ const PlayerApp = () => {
       const currentSummary = summary.find((item) => item.question === question);
       if (currentSummary && currentSummary.fastestAnswer) {
         const { name, timeAnswered } = currentSummary.fastestAnswer;
-        alert(
+        setNotification(
           `Fastest correct answer: ${name} - Time answered: ${timeAnswered} seconds`
         );
+        setTimeout(() => {
+          setNotification(null);
+        }, 30000); // Clear notification after 30 seconds
       }
     } catch (error) {
       console.error("Error fetching summary:", error);
@@ -191,6 +196,17 @@ const PlayerApp = () => {
           ) : (
             <p>Waiting for the quiz to start...</p>
           )}
+        </div>
+      )}
+      {notification && (
+        <div
+          style={{
+            backgroundColor: "yellow",
+            padding: "10px",
+            marginTop: "10px",
+          }}
+        >
+          {notification}
         </div>
       )}
     </div>
