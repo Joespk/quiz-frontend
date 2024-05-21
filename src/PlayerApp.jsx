@@ -136,6 +136,9 @@ const PlayerApp = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
+
+    // Fetch summary after submitting answer
+    fetchSummary();
   };
 
   const handleJoin = () => {
