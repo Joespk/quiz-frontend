@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
+import axios from "axios"; // นำเข้า axios
 
 const socket = io("https://metal-earthy-space.glitch.me", {
   path: "/socket.io",
@@ -28,7 +29,7 @@ const PlayerApp = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
-  const [summary, setSummary] = useState([]);
+  const [summary, setSummary] = useState([]); // สร้าง state สำหรับ summary
   const timerRef = useRef(null);
   const startTimeRef = useRef(null); // To store the start time of the question
 
@@ -175,6 +176,8 @@ const PlayerApp = () => {
           ) : (
             <p>Waiting for the quiz to start...</p>
           )}
+          <button onClick={fetchSummary}>Show Summary</button>{" "}
+          {/* ปุ่มเพื่อเรียก fetchSummary */}
         </div>
       )}
     </div>
